@@ -5,6 +5,12 @@ socket.on("message", (message) => {
     document.querySelector("#recevied-message").textContent = message;
 })
 
+socket.on("locationMessage", (location) => {
+    console.log("Location", location)
+    document.querySelector("#location").href = location;
+    document.querySelector("#location").textContent = location;
+})
+
 const $sendMessage = document.querySelector("#send-message");
 const $shareLocation = document.querySelector("#share-location");
 
