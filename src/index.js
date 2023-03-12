@@ -27,9 +27,20 @@ const publicDirectoryPath = path.join(__dirname, '../public')
 // Setup static directory to serve
 app.use(express.static(publicDirectoryPath));
 
-
-io.on('connection', () => {
+io.on('connection', (socket) => {
     console.log('New connection!')
+
+    const message = "Welcome!"
+    socket.emit('message', message)
+    socket.broadcast.emit("message", "A new user has joined")
+
+    socket.on("sendMessage", (message) => {
+        socket.broadcast.emit("message", message)
+    })
+
+    socket.on("disconnect", () => {
+        io.emit("message", "A user has left!")
+    })
 })
 
 
