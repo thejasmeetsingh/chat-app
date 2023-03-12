@@ -5,7 +5,10 @@ socket.on("message", (message) => {
     document.querySelector("#recevied-message").textContent = message;
 })
 
-document.querySelector("#send-message").addEventListener("click", (e) => {
+const $sendMessage = document.querySelector("#send-message");
+const $shareLocation = document.querySelector("#share-location");
+
+$sendMessage.addEventListener("click", (e) => {
     e.preventDefault();
     const message = document.querySelector("#message").value;
 
@@ -14,4 +17,22 @@ document.querySelector("#send-message").addEventListener("click", (e) => {
         socket.emit("sendMessage", message);
         document.querySelector("#message").value = "";
     }
+})
+
+$shareLocation.addEventListener("click", () => {
+    if (!navigator.geolocation) {
+        return alert("Your browser does not support this feature")
+    }
+
+    $shareLocation.setAttribute("disabled", "disabled")
+
+    navigator.geolocation.getCurrentPosition((position) => {
+        socket.emit("sendLocation", {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        }, () => {
+            console.log("Location Shared!")
+            $shareLocation.removeAttribute("disabled")
+        })
+    })
 })

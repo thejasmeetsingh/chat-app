@@ -38,6 +38,12 @@ io.on('connection', (socket) => {
         socket.broadcast.emit("message", message)
     })
 
+    socket.on("sendLocation", (coords, callback) => {
+        const location = `https://www.google.com/maps/?q=${coords.lat},${coords.lng}`
+        socket.broadcast.emit("message", location)
+        callback();
+    })
+
     socket.on("disconnect", () => {
         io.emit("message", "A user has left!")
     })
