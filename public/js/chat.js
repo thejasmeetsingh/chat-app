@@ -2,13 +2,15 @@ const socket = io();
 
 socket.on("message", (message) => {
     console.log("Message Received", message)
-    document.querySelector("#recevied-message").textContent = message;
+    document.querySelector("#recevied-message").textContent = message.text;
+    document.querySelector("#created-at").textContent = moment(message.createdAt).format("h:mm A");
 })
 
-socket.on("locationMessage", (location) => {
-    console.log("Location", location)
-    document.querySelector("#location").href = location;
-    document.querySelector("#location").textContent = location;
+socket.on("locationMessage", (locationMessage) => {
+    console.log("Location", locationMessage)
+    document.querySelector("#location").href = locationMessage.text;
+    document.querySelector("#location").textContent = locationMessage.text;
+    document.querySelector("#created-at").textContent = moment(locationMessage.createdAt).format("h:mm A");
 })
 
 const $sendMessage = document.querySelector("#send-message");
