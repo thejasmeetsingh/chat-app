@@ -8,8 +8,8 @@ socket.on("message", (message) => {
 
 socket.on("locationMessage", (locationMessage) => {
     console.log("Location", locationMessage)
-    document.querySelector("#location").href = locationMessage.text;
-    document.querySelector("#location").textContent = locationMessage.text;
+    document.querySelector("#location").href = locationMessage.url;
+    document.querySelector("#location").textContent = locationMessage.url;
     document.querySelector("#created-at").textContent = moment(locationMessage.createdAt).format("h:mm A");
 })
 
