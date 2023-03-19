@@ -34,6 +34,12 @@ io.on('connection', (socket) => {
 
         socket.emit('message', generateMessage("Admin", "Welcome!"))
         socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined!`))
+        
+        // Send list of all users in the room when any user join the room
+        io.to(user.room).emit('roomData', {
+            room: user.room,
+            users: getUsersInRoom(user.room)
+        })
     })
 
     socket.on("sendMessage", (message, callback) => {
@@ -60,6 +66,12 @@ io.on('connection', (socket) => {
 
         if (user) {
             io.to(user.room).emit("message", generateMessage("Admin", `${user.username} has left!`))
+            
+            // Send list of all users in the room when a user leaves the room
+            io.to(user.room).emit('roomData', {
+                room: user.room,
+                users: getUsersInRoom(user.room)
+            })
         }
     })
 })
