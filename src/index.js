@@ -46,13 +46,21 @@ io.on('connection', (socket) => {
     })
 
     socket.on("sendMessage", (message, callback) => {
-        socket.broadcast.emit("message", generateMessage(message))
+        const user = getUser(socket.id)
+
+        if (user) {
+            socket.broadcast.to(user.room).emit("message", generateMessage(message))
+        }
         callback();
     })
 
     socket.on("sendLocation", (coords, callback) => {
-        const location = `https://www.google.com/maps/?q=${coords.lat},${coords.lng}`
-        socket.broadcast.emit("locationMessage", generateLocationMessage(location))
+        const user = getUser(socket.id)
+
+        if (user) {
+            const location = `https://www.google.com/maps/?q=${coords.lat},${coords.lng}`
+            socket.broadcast.to(user.room).emit("locationMessage", generateLocationMessage(location))
+        }
         callback();
     })
 
