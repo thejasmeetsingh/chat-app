@@ -2,7 +2,6 @@ const path = require('path');
 const http = require('http');
 
 const express = require('express');
-const hbs = require('hbs');
 const socketio = require('socket.io');
 const { generateMessage, generateLocationMessage } = require('./utils/messages')
 const { addUser, removeUser, getUser, getUsersInRoom } = require('./utils/users')
@@ -14,19 +13,11 @@ const io = socketio(server)
 
 const port = process.env.PORT
 
+
 // Define paths for Express config
 const publicDirectoryPath = path.join(__dirname, '../public')
-// const viewsPath = path.join(__dirname, '../templates/views');
-// const partialsPath = path.join(__dirname, '../templates/partials')
 
 
-// // Setup handlebars engine and views location
-// app.set('view engine', 'hbs');
-// app.set('views', viewsPath);
-// hbs.registerPartials(partialsPath);
-
-
-// Setup static directory to serve
 app.use(express.static(publicDirectoryPath));
 
 io.on('connection', (socket) => {
@@ -41,15 +32,15 @@ io.on('connection', (socket) => {
 
         socket.join(user.room)
 
-        socket.emit('message', generateMessage("Welcome!"))
-        socket.broadcast.to(user.room).emit("message", generateMessage(`${user.username} has joined!`))
+        socket.emit('message', generateMessage("Admin", "Welcome!"))
+        socket.broadcast.to(user.room).emit("message", generateMessage("Admin", `${user.username} has joined!`))
     })
 
     socket.on("sendMessage", (message, callback) => {
         const user = getUser(socket.id)
 
         if (user) {
-            socket.broadcast.to(user.room).emit("message", generateMessage(message))
+            socket.broadcast.to(user.room).emit("message", generateMessage(user.username, message))
         }
         callback();
     })
@@ -59,7 +50,7 @@ io.on('connection', (socket) => {
 
         if (user) {
             const location = `https://www.google.com/maps/?q=${coords.lat},${coords.lng}`
-            socket.broadcast.to(user.room).emit("locationMessage", generateLocationMessage(location))
+            socket.broadcast.to(user.room).emit("locationMessage", generateLocationMessage(user.username, location))
         }
         callback();
     })
@@ -68,7 +59,7 @@ io.on('connection', (socket) => {
         const user = removeUser(socket.id)
 
         if (user) {
-            io.to(user.room).emit("message", generateMessage(`${user.username} has left!`))
+            io.to(user.room).emit("message", generateMessage("Admin", `${user.username} has left!`))
         }
     })
 })
